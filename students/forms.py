@@ -1,6 +1,6 @@
 from django import forms
 from .models import Student
-
+from .models import Grade
 class StudentForm(forms.ModelForm):
     class Meta:
         model = Student
@@ -14,4 +14,15 @@ class StudentForm(forms.ModelForm):
             'email': forms.EmailInput(attrs={'class': 'form-control'}),
             'age': forms.NumberInput(attrs={'class': 'form-control'}),
             'major': forms.TextInput(attrs={'class': 'form-control'}),
+        }
+
+class GradeForm(forms.ModelForm):
+    class Meta:
+        model = Grade
+        fields = ['student', 'subject', 'score']
+        # Styling it with Bootstrap classes
+        widgets = {
+            'student': forms.Select(attrs={'class': 'form-control'}),
+            'subject': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'e.g. Mathematics'}),
+            'score': forms.NumberInput(attrs={'class': 'form-control', 'min': '0', 'max': '100'}),
         }

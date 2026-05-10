@@ -31,6 +31,12 @@
                         <tr>
                             <td>{{ student.first_name }} {{ student.last_name }}</td>
                             <td>{{ student.email }}</td>
+                            <td>
+        <!-- This dynamically generates the link for EACH student -->
+        <a href="{% url 'student_profile' student.id %}" class="btn btn-sm btn-outline-primary">
+            View Dashboard
+        </a>
+    </td>
                             <td>{{ student.age }}</td>
                             <td>{{ student.major }}</td>
                             <td>

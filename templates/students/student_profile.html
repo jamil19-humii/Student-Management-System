@@ -1,0 +1,87 @@
+{% extends 'students/base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h2>Performance Dashboard: {{ student.first_name }} {{ student.last_name }}</h2>
+            <hr>
+        </div>
+    </div>
+
+    <!-- Analysis Summary Cards -->
+    <div class="row text-center mb-4">
+        <div class="col-md-6">
+            <div class="card bg-primary text-white shadow">
+                <div class="card-body">
+                    <h5 class="card-title">Average Grade</h5>
+                    <p class="display-4">{{ average_grade }}%</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card bg-success text-white shadow">
+                <div class="card-body">
+                    <h5 class="card-title">Attendance Rate</h5>
+                    <p class="display-4">{{ attendance_rate }}%</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Detailed Data Tables -->
+    <div class="row">
+        <div class="col-md-6">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+    <h4>Subject Grades</h4>
+    <a href="{% url 'add_grade' student.id %}" class="btn btn-primary btn-sm">+ Add New Grade</a>
+</div>
+            
+            <table class="table table-hover border bg-white">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Subject</th>
+                        <th>Score</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for grade in student.grades.all %}
+                    <tr>
+                        <td>{{ grade.subject }}</td>
+                        <td>{{ grade.score }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="2" class="text-muted text-center">No grades recorded yet.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="col-md-6">
+            <h4>Recent Attendance</h4>
+            <table class="table table-hover border bg-white">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Date</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for record in student.attendance_records.all %}
+                    <tr>
+                        <td>{{ record.date }}</td>
+                        <td>
+                            <span class="badge {% if record.status == 'Present' %}bg-success{% else %}bg-danger{% endif %}">
+                                {{ record.status }}
+                            </span>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="2" class="text-muted text-center">No attendance data found.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

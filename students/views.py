@@ -2,6 +2,8 @@ from django.shortcuts import render ,redirect
 from .models import Student
 from .forms import StudentForm
 from django.shortcuts import get_object_or_404
+from django.db.models import Avg
+from .forms import GradeForm
 
 def student_list(request):
  query = request.GET.get('search')
@@ -42,3 +44,39 @@ def delete_student(request, pk):
         student.delete()
         return redirect('student_list')
     return render(request, 'students/delete_confirm.html', {'student': student})
+
+def student_profile(request, student_id):
+   # Change .get() to get_object_or_404
+    student = get_object_or_404(Student, id=student_id)
+    
+    # Analysis 1: Calculate Average Grade
+    average_grade = student.grades.aggregate(Avg('score'))['score__avg'] or 0
+    
+    # Analysis 2: Calculate Attendance Rate
+    total_days = student.attendance_records.count()
+    days_present = student.attendance_records.filter(status='Present').count()
+    
+    attendance_rate = (days_present / total_days * 100) if total_days > 0 else 0
+    
+    context = {
+        'student': student,
+        'average_grade': round(average_grade, 2),
+        'attendance_rate': round(attendance_rate, 1),
+    }
+    return render(request, 'students/student_profile.html', context)
+
+def add_grade(request, student_id):
+    student = get_object_or_404(Student, id=student_id)
+    
+    if request.method == "POST":
+        form = GradeForm(request.POST)
+        if form.is_valid():
+            grade = form.save(commit=False)
+            grade.student = student  # Link the grade to the specific student
+            grade.save()
+            return redirect('student_profile', student_id=student.id)
+    else:
+        # Pre-fill the student field in the form
+        form = GradeForm(initial={'student': student})
+    
+    return render(request, 'students/add_grade.html', {'form': form, 'student': student})
