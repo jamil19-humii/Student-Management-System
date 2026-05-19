@@ -1,9 +1,10 @@
 from django.shortcuts import render ,redirect
-from .models import Student
+from .models import Attendance, Student
 from .forms import StudentForm
 from django.shortcuts import get_object_or_404
 from django.db.models import Avg
 from .forms import GradeForm
+from datetime import date as datetime_date
 
 def student_list(request):
  query = request.GET.get('search')
@@ -80,3 +81,25 @@ def add_grade(request, student_id):
         form = GradeForm(initial={'student': student})
     
     return render(request, 'students/add_grade.html', {'form': form, 'student': student})
+def daily_attendance(request):
+    # Get the date from the URL parameter, or default to today's date
+    selected_date = request.GET.get('date', str(datetime_date.today()))
+    all_students = Student.objects.all()
+    
+    if request.method == "POST":
+        # Loop through all students to save their attendance status
+        for student in all_students:
+            status = request.POST.get(f'status_{student.id}')
+            if status:
+                # Update the record if it exists, otherwise create a new one
+                Attendance.objects.update_or_create(
+                    student=student,
+                    date=selected_date,
+                    defaults={'status': status}
+                )
+        return redirect('daily_attendance')
+
+    return render(request, 'students/daily_attendance.html', {
+        'students': all_students,
+        'selected_date': selected_date
+    })

@@ -1,0 +1,50 @@
+{% extends 'students/base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="card shadow mb-4">
+        <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+            <h4 class="mb-0">Daily Attendance Tracker</h4>
+            <!-- Date Picker Form -->
+            <form method="GET" class="d-flex align-items-center gap-2">
+                <input type="date" name="date" value="{{ selected_date }}" class="form-control form-control-sm">
+                <button type="submit" class="btn btn-sm btn-light">Go</button>
+            </form>
+        </div>
+        <div class="card-body">
+            <h5 class="text-muted mb-3">Logging Attendance for: <strong>{{ selected_date }}</strong></h5>
+            
+            <form method="POST">
+                {% csrf_token %}
+                <table class="table table-hover align-middle border">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Student Name</th>
+                            <th class="text-center">Attendance Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for student in students %}
+                        <tr>
+                            <td>{{ student.first_name }} {{ student.last_name }}</td>
+                            <td class="text-center">
+                                <div class="btn-group" role="group">
+                                    <!-- Present Radio Button -->
+                                    <input type="radio" class="btn-check" name="status_{{ student.id }}" id="present_{{ student.id }}" value="Present" checked>
+                                    <label class="btn btn-outline-success btn-sm" for="present_{{ student.id }}">Present</label>
+
+                                    <!-- Absent Radio Button -->
+                                    <input type="radio" class="btn-check" name="status_{{ student.id }}" id="absent_{{ student.id }}" value="Absent">
+                                    <label class="btn btn-outline-danger btn-sm" for="absent_{{ student.id }}">Absent</label>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <button type="submit" class="btn btn-primary w-100 mt-3">Save Daily Attendance</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
