@@ -26,6 +26,7 @@ SECRET_KEY = 'django-insecure-0b09(5(@dei(qi*jy)vpxm&jln9tk56hl%-g+cnt0l_+)z1ct9
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
+CSRF_TRUSTED_ORIGINS = ['https://scholartrack-avno.onrender.com']
 
 
 # Application definition
